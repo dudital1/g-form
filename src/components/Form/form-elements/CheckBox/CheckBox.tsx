@@ -1,0 +1,44 @@
+import { Controller } from "react-hook-form";
+import { FormElementProps } from "../types";
+
+export const CheckBox: React.FC<FormElementProps> = ({
+  control,
+  inputConfig,
+}) => {
+  return (
+    <>
+      {inputConfig.options?.map((option) => (
+        <div key={option.value}>
+          <Controller
+            control={control}
+            name={inputConfig.name}
+            render={({ field }) => {
+              const fieldValues = field.value ?? [];
+              return (
+                <>
+                  <input
+                    type="checkbox"
+                    id={`${inputConfig.name}-${option.value}`}
+                    checked={fieldValues.includes(option.value)}
+                    onChange={(e) => {
+                      const newValues = e.target.checked
+                        ? [...fieldValues, option.value]
+                        : fieldValues.filter(
+                            (value: string) => value !== option.value
+                          );
+                      field.onChange(newValues);
+                    }}
+                    value={option.value}
+                  />
+                  <label htmlFor={`${inputConfig.name}-${option.value}`}>
+                    {option.label}
+                  </label>
+                </>
+              );
+            }}
+          />
+        </div>
+      ))}
+    </>
+  );
+};
