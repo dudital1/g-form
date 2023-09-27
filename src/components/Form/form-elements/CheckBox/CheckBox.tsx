@@ -1,5 +1,12 @@
 import { Controller } from "react-hook-form";
+import styled from "styled-components";
 import { FormElementProps } from "../types";
+
+const StyledCheckBoxInput = styled.input`
+  &:checked {
+    accent-color: ${({ theme }) => theme.colors.secondary};
+  }
+`;
 
 export const CheckBox: React.FC<FormElementProps> = ({
   control,
@@ -16,7 +23,7 @@ export const CheckBox: React.FC<FormElementProps> = ({
               const fieldValues = field.value ?? [];
               return (
                 <>
-                  <input
+                  <StyledCheckBoxInput
                     type="checkbox"
                     id={`${inputConfig.name}-${option.value}`}
                     checked={fieldValues.includes(option.value)}

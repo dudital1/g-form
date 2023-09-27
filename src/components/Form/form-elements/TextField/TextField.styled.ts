@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const TextInput = styled.input`
-  border: 1px solid #ccc;
+  border: 1px solid ${({ theme }) => theme.colors.grey};
   border-radius: 4px;
   padding: 8px 12px;
   font-size: 16px;
@@ -9,7 +9,6 @@ export const TextInput = styled.input`
 
   &:focus {
     outline: none;
-    border-color: #fa6400;
-    box-shadow: 0 0 0 3px rgba(250, 100, 0, 0.1);
+    border-color: ${({ theme }) => theme.colors.secondary};
   }
 `;

@@ -1,37 +1,48 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useForm, SubmitHandler, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { TextField } from "./form-elements/TextField/TextField";
-import { Input } from "./types";
+import { Input, InputTypes } from "./types";
 import { CheckBoxGroup } from "./form-elements/CheckBox/CheckBoxGroup";
 import { RadioInputFroup } from "./form-elements/RadioInput/RadioInputFroup";
 import { StyledForm } from "./Form.styled";
-import { Flex, FlexColumn } from "../../design-system/Flex/Flex";
-import { Button } from "../../design-system/Button/Button.styles";
+import { FlexColumn } from "../../design-system/Flex/Flex";
+import { generateZodSchemaFromInputs } from "./utils";
+import { Body1 } from "../../design-system/Typography/Typography";
+import styled from "styled-components";
+import { Button } from "../../design-system/Button";
+import { z } from "zod";
+
+const StyledErrorMessage = styled(Body1)`
+  height: 20px;
+  color: ${({ theme }) => theme.colors.error};
+`;
 
 type Props = {
-  schema: z.Schema<any>;
   inputs: Input[];
   onSubmit: SubmitHandler<any>;
   inputsClassName?: string;
   formClassName?: string;
 };
 
-const GenericForm: React.FC<Props> = ({ schema, inputs, onSubmit }) => {
+const GenericForm: React.FC<Props> = ({ inputs, onSubmit }) => {
+  const schema = useMemo(() => {
+    return generateZodSchemaFromInputs(inputs);
+  }, [inputs]);
+
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<any>({
+  } = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
 
   const renderInput = useCallback((input: Input, errors: FieldErrors<any>) => {
     switch (input.type) {
-      case "radio":
+      case InputTypes.Radio:
         return <RadioInputFroup control={control} inputConfig={input} />;
-      case "checkbox":
+      case InputTypes.Checkbox:
         return <CheckBoxGroup control={control} inputConfig={input} />;
       default:
         return <TextField inputConfig={input} control={control} />;
@@ -39,19 +50,19 @@ const GenericForm: React.FC<Props> = ({ schema, inputs, onSubmit }) => {
   }, []);
 
   return (
-    <StyledForm as={"form"} onSubmit={handleSubmit(onSubmit)}>
+    <StyledForm as={"form"} onSubmit={handleSubmit((data) => onSubmit(data))}>
       {inputs.map((input) => (
         <FlexColumn key={input.name}>
           <label htmlFor={input.name}>{input.label}</label>
           {renderInput(input, errors)}
-          <Flex>
+          <StyledErrorMessage>
             {errors[input.name] && (
-              <div>{`${errors[input.name]?.message}`}</div>
+              <div>{`* ${errors[input.name]?.message}`}</div>
             )}
-          </Flex>
+          </StyledErrorMessage>
         </FlexColumn>
       ))}
-      <Button type="submit">Submit</Button>
+      <Button>Submit</Button>
     </StyledForm>
   );
 };

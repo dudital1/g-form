@@ -1,31 +1,48 @@
-import { Input } from "./types";
+import { Input, InputTypes } from "./types";
 import { z } from "zod";
 
 export const mockFormInputs: Input[] = [
   {
     name: "name",
     label: "Name",
-    type: "text",
+    validation: z.string().nonempty("Name is required"),
+    type: InputTypes.Text,
   },
   {
     name: "email",
     label: "Email",
-    type: "email",
+    validation: z.string().email("Invalid email").nonempty("Email is required"),
+    type: InputTypes.Email,
   },
   {
     name: "password",
     label: "Password",
-    type: "password",
+    validation: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .nonempty("Password is required"),
+    type: InputTypes.Password,
   },
   {
     name: "lastName",
     label: "Last Name",
-    type: "text",
+    validation: z.string().nonempty("Name is required"),
+    type: InputTypes.Text,
+  },
+  {
+    name: "work",
+    label: "Work",
+    validation: z
+      .string()
+      .min(3, "Work must contain at least 3 character(s)")
+      .nonempty("Name is required"),
+    type: InputTypes.Text,
   },
   {
     name: "gender",
     label: "Gender",
-    type: "radio",
+    type: InputTypes.Radio,
+    validation: z.enum(["male", "female", "other"]),
     options: [
       { label: "Male", value: "male" },
       { label: "Female", value: "female" },
@@ -35,7 +52,11 @@ export const mockFormInputs: Input[] = [
   {
     name: "hobbies",
     label: "Hobbies",
-    type: "checkbox",
+    type: InputTypes.Checkbox,
+    validation: z
+      .array(z.string())
+      .min(1, "Select at least one hobby")
+      .nonempty("Hobbies are required"),
     options: [
       { label: "Reading", value: "reading" },
       { label: "Gaming", value: "gaming" },
@@ -43,18 +64,3 @@ export const mockFormInputs: Input[] = [
     ],
   },
 ];
-
-export const mockSchema = z.object({
-  name: z.string().nonempty("Name is required"),
-  lastName: z.string().nonempty("Name is required"),
-  email: z.string().email("Invalid email").nonempty("Email is required"),
-  password: z
-    .string()
-    .min(6, "Password must be at least 6 characters")
-    .nonempty("Password is required"),
-  gender: z.enum(["male", "female", "other"]),
-  hobbies: z
-    .array(z.string())
-    .min(1, "Select at least one hobby")
-    .nonempty("Hobbies are required"),
-});

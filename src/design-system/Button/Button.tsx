@@ -1,19 +1,28 @@
-import { FC, ReactNode } from "react";
-import { Button as BaseButton } from "./Button.styles";
+import { BUTTON_SIZE, IButtonProps } from "./Button.types";
+import { IconWrapper, Wrapper } from "./Button.styles";
 
-interface IButtonProps extends React.ComponentPropsWithoutRef<"button"> {
-  children: ReactNode;
-  disabled?: boolean;
-}
-
-export const Button: FC<IButtonProps> = ({
+const Button = ({
+  size = BUTTON_SIZE.M,
+  leftIcon,
+  rightIcon,
   children,
-  disabled = false,
+  loading,
+  disabled,
+  rounded,
   ...buttonProps
-}) => {
+}: IButtonProps) => {
   return (
-    <BaseButton disabled={disabled} {...buttonProps}>
+    <Wrapper
+      $size={size}
+      disabled={disabled || loading}
+      $rounded={rounded || false}
+      {...buttonProps}
+    >
+      <IconWrapper>{leftIcon}</IconWrapper>
       {children}
-    </BaseButton>
+      <IconWrapper>{rightIcon}</IconWrapper>
+    </Wrapper>
   );
 };
+
+export default Button;
